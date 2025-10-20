@@ -1,0 +1,46 @@
+.card-hover {
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card-hover:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+/* HospitalCards.css */
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  transition: 0.3s;
+}
+
+.card-color-0 {
+  background-color: #e3f2fd; /* light blue */
+}
+
+.card-color-1 {
+  background-color: #fce4ec; /* light pink */
+}
+
+.card-color-2 {
+  background-color: #e8f5e9; /* light green */
+}
+
+.card-color-3 {
+  background-color: #fff3e0; /* light orange */
+}
+
+.card-color-4 {
+  background-color: #ede7f6; /* light purple */
+}
+
+.card-color-5 {
+  background-color: #f3e5f5; /* lavender */
+}
+
+.card-color-6 {
+  background-color: #e0f7fa; /* light cyan */
+}
+
+.card-color-7 {
+  background-color: #f9fbe7; /* light lime */
+}
