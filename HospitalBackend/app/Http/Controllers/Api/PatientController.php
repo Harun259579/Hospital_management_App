@@ -92,9 +92,10 @@ class PatientController extends Controller
     $patient = Patient::findOrFail($id);
 
     // Only allow admin or the patient to update their own record
-    if (!($user->role === 'admin' || ($user->role === 'patient' && $user->id === $patient->user_id))) {
-        return response()->json(['message' => 'Unauthorized'], 403);
-    }
+    if (!($user->role === 'admin' || $user->role === 'staff' || ($user->role === 'patient' && $user->id === $patient->user_id))) {
+    return response()->json(['message' => 'Unauthorized'], 403);
+}
+
 
     // Validate the incoming request data
     $data = $req->validate([

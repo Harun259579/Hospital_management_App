@@ -4,7 +4,7 @@ import "../assets/HospitalCards.css";
 
 const AboutUs = () => {
   return (
-    <div className="container my-5">
+    <div className="container "style={{marginTop:60}}>
       {/* Page Title */}
       <div className="text-center mb-5">
         <h1 className="display-5 fw-bold text-primary">About Us</h1>

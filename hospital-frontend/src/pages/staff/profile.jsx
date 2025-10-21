@@ -75,7 +75,7 @@ const StaffProfile = () => {
         data.append("photo", formData.newPhoto);
       }
 
-      const res = await api.put(`/staff/${staff.id}`, data, {
+      const res = await api.put(`/staffs/${staff.id}`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

@@ -27,8 +27,8 @@ const Contact = () => {
   };
 
   return (
-    <div className="container my-5">
-      <h2 className="text-center text-primary mb-5">Contact Us</h2>
+    <div className="container" style={{marginTop:60}}>
+      <h2 className="text-center text-primary mb-5 mt-2">Contact Us</h2>
       <div className="row">
         {/* ===== LEFT SIDE: Contact Form ===== */}
         <div className="col-md-7">

@@ -70,15 +70,17 @@ class DoctorController extends Controller
 {
     $this->authorizeAdmin($req->user()); // ✅ Admin authorization check (optional, তুমি চাইলে বাদ দিতে পারো)
 
-    $admin = Admin::with('user')->findOrFail($id);
+    $doctor = Doctor::with('user')->findOrFail($id);
 
     // ✅ Validate fields
     $data = $req->validate([
-        'name' => 'nullable|string|max:255',
-        'email' => 'nullable|email',
-        'phone' => 'nullable|string|max:20',
-        'address' => 'nullable|string|max:255',
-        'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif',
+       
+            'photo' => 'nullable|file|image|mimes:jpg,jpeg,png,gif', 
+            'bio' => 'nullable|string',
+            'fee' => 'nullable|numeric',
+            'visiting_address' => 'nullable|string',
+            'shift'=>'nullable|string'
+
     ]);
 
     // ✅ Update user info (users table)
@@ -86,30 +88,30 @@ class DoctorController extends Controller
         $userData = [];
         if (isset($data['name'])) $userData['name'] = $data['name'];
         if (isset($data['email'])) $userData['email'] = $data['email'];
-        $admin->user->update($userData);
+        $doctor->user->update($userData);
     }
 
     // ✅ Handle photo upload (save in /public/uploads/admins)
     if ($req->hasFile('photo')) {
         // পুরনো photo delete করবে যদি থাকে
-        if ($admin->photo && file_exists(public_path($admin->photo))) {
-            unlink(public_path($admin->photo));
+        if ($doctor->photo && file_exists(public_path($doctor->photo))) {
+            unlink(public_path($doctor->photo));
         }
 
         $file = $req->file('photo');
         $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('uploads/admins'), $filename);
-        $data['photo'] = '/uploads/admins/' . $filename;
+        $file->move(public_path('uploads/doctors'), $filename);
+        $data['photo'] = '/uploads/doctors/' . $filename;
     }
 
     // ✅ Update admin info
-    $admin->update(array_filter($data, function ($key) {
-        return in_array($key, ['phone', 'address', 'photo']);
+    $doctor->update(array_filter($data, function ($key) {
+        return in_array($key, ['bio', 'fee','visiting_address','shift', 'photo']);
     }, ARRAY_FILTER_USE_KEY));
 
     return response()->json([
-        'message' => 'Admin updated successfully',
-        'data' => $admin->load('user'),
+        'message' => 'Doctor updated successfully',
+        'data' => $doctor->load('user'),
     ]);
 }
 
@@ -136,14 +138,15 @@ class DoctorController extends Controller
 
 public function myProfile(Request $request)
 {
-    $user = $request->user(); // logged in user
+    $user = $request->user();
 
-    $doctor = Doctor::with('user','specialities','shedules')
+    $doctor = Doctor::with('user')
         ->where('user_id', $user->id)
         ->firstOrFail();
 
     return response()->json($doctor);
 }
+
 
 
     protected function authorizeAdmin($user)

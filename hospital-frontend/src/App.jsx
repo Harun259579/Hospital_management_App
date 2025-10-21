@@ -13,6 +13,7 @@ import Home from "./pages/Home";
 import AboutUs from "./pages/AboutUs";
 import Contact from "./pages/Contact";
 import Doctors from "./pages/Doctors"
+import NoticeBoard from "./pages/Notice"
 import Footer from "./components/Footer";
 import AppNavbar from "./components/Navbar";
 
@@ -49,6 +50,7 @@ function App() {
         <Route path="/contact" element={<Contact />} />
         
         <Route path="/doctors" element={<Doctors />} />
+        <Route path="/notices" element={<NoticeBoard />} />
 
         {/* Auth */}
         <Route path="/login" element={<Login onLogin={setMe} />} />

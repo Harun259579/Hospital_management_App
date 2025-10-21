@@ -75,14 +75,22 @@ const handleUpdate = async () => {
       },
     });
 
-    console.log("✅ Updated Admin:", res.data);
-    setAdmin(res.data);
-    setPreview(res.data.photo);
+    const updated = res.data.data; // ✅ extract actual updated admin
+    setAdmin(updated);
+    setFormData({
+      name: updated.user?.name || "",
+      email: updated.user?.email || "",
+      phone: updated.phone || "",
+      address: updated.address || "",
+      photo: updated.photo || "",
+      newPhoto: null,
+    });
+    setPreview(updated.photo);
     setShowModal(false);
     alert("✅ Profile updated successfully!");
   } catch (err) {
     console.error("❌ Update failed:", err);
-    console.error("Error response:", err.response);  // Error details here
+    console.error("Error response:", err.response);
     if (err.response) {
       alert(`Error: ${err.response.data.message}`);
     } else {

@@ -39,7 +39,7 @@ const AppNavbar = ({ user, onLogout }) => {
           <Nav.Link as={Link} to="/about" className="fw-semibold">
             About Us
           </Nav.Link>
-          <Nav.Link as={Link} to="/" className="fw-semibold">
+          <Nav.Link as={Link} to="/notices" className="fw-semibold">
             Notice
           </Nav.Link>
 

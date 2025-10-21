@@ -153,7 +153,7 @@ const AddInventoryForm = () => {
           </Col>
         </Row>
 
-        <Button variant="primary" type="submit">
+        <Button variant="primary" type="submit" style={{marginTop:10}}>
           Save Item
         </Button>
       </Form>

@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\BillingController;
 use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\NoticeController;
 
 
 
@@ -31,6 +32,8 @@ Route::get('/staffs', [StaffController::class, 'index']);
 Route::get('/patients', [PatientController::class, 'index']);
 Route::get('/appointments', [AppointmentController::class, 'index']);
 Route::get('/medical-histories', [MedicalHistoryController::class, 'index']);
+Route::get('/notices', [NoticeController::class, 'index']);
+Route::get('/doctor-shedules', [DoctorSheduleController::class, 'index']);
 
 // Authenticated routes (Sanctum protected)
 Route::middleware('auth:sanctum')->group(function () {
@@ -46,6 +49,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::put('/admins/{id}', [AdminController::class, 'update']);
     Route::get('/admin/stats', [AdminController::class, 'stats']);
     Route::get('/admin/profile', [AdminController::class, 'myProfile']);
+    Route::post('/notices', [NoticeController::class, 'store']);
+    Route::delete('/notices/{id}', [NoticeController::class, 'destroy']);
 
     // ====================== DOCTOR ======================
     
@@ -98,7 +103,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     // ======================  DOCTOR SHEDULE ======================
-    Route::get('/doctor-shedules', [DoctorSheduleController::class, 'index']);
+    
     Route::post('/doctor-shedules', [DoctorSheduleController::class, 'store']);
     Route::put('/doctor-shedules/{id}', [DoctorSheduleController::class, 'update']);
     Route::delete('/doctor-shedules/{id}', [DoctorSheduleController::class, 'destroy']);

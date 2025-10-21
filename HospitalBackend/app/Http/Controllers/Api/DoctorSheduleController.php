@@ -10,38 +10,51 @@ class DoctorSheduleController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('auth:sanctum');
+        $this->middleware('auth:sanctum')->except(['index']);;
     }
 
-    public function index(Request $req)
-    {
-        $schedules = DoctorShedule::with('doctor')->get();
-        return response()->json($schedules);
-    }
-
-    public function store(Request $req)
-    {
-        $user = $req->user();
-        $validated = $req->validate([
-            'doctor_id' => 'required|exists:doctors,id',
-            'day_of_week' => 'required|string',
-            'start_time' => 'required',
-            'end_time' => 'required',
-        ]);
-
-        // admin or doctor themself can create schedule
-        if ($user->role === 'doctor') {
-            $doctor = $user->doctorProfile ?? null;
-            if (!$doctor || $doctor->id != $validated['doctor_id']) {
-                return response()->json(['message' => 'Unauthorized'], 403);
-            }
-        } elseif ($user->role !== 'admin') {
-            return response()->json(['message' => 'Unauthorized'], 403);
+  public function index(Request $req)
+{
+    // Fetch schedules based on doctor_id query parameter
+    $doctorId = $req->query('doctor_id');
+    
+    if ($doctorId) {
+        \Log::info('Fetching schedules for doctor_id: ' . $doctorId); // Log doctor_id for debugging
+        
+        $schedules = DoctorShedule::where('doctor_id', $doctorId)
+                                  ->with('doctor')  // Assuming a relationship exists with Doctor model
+                                  ->get();
+        
+        if ($schedules->isEmpty()) {
+            \Log::info('No schedules found for doctor_id: ' . $doctorId); // Log if no schedules are found
         }
-
-        $schedule = DoctorShedule::create($validated);
-        return response()->json($schedule, 201);
+    } else {
+        // Fetch all schedules if no doctor_id is provided
+        $schedules = DoctorShedule::with('doctor')->get();
     }
+    
+    return response()->json($schedules);
+}
+
+   public function store(Request $req)
+{
+    \Log::info('Received data:', $req->all());  // Log the incoming request data
+
+    $user = $req->user();
+    $validated = $req->validate([
+        'doctor_id' => 'required|exists:doctors,id',
+        'day_of_week' => 'required|string',
+        'start_time' => 'required',
+        'end_time' => 'required',
+    ]);
+
+    // Check user role and authorization
+    // ...
+
+    $schedule = DoctorShedule::create($validated);
+    return response()->json($schedule, 201);
+}
+
 
     public function update(Request $req, $id)
     {

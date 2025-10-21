@@ -22,6 +22,8 @@ const menu = [
   { name: "Nurses", path: "/admin/nurses", icon: <FiUserCheck /> },
   { name: "Staff", path: "/admin/staffs", icon: <FiUsers /> },
   { name: "Patients", path: "/admin/patients", icon: <FiUserX /> },
+  { name: "Notice", path: "/admin/notices/create", icon: <FiCalendar /> },
+  
   { name: "Appointments", path: "/admin/appointments", icon: <FiCalendar /> },
   { name: "Inventory", path: "/admin/inventory", icon: <FiBox /> },
   { name: "Message", path: "/admin/contact", icon: <FiMail /> },
@@ -38,7 +40,7 @@ const AdminSidebar = ({ adminPhoto, adminName }) => {
     >
       {/* Admin Photo and Name Section */}
       <div className="text-center mb-4">
-        <img
+     {/*   <img
           src={adminPhoto} // Assuming `adminPhoto` is a URL to the image
           alt="Admin"
           style={{
@@ -47,7 +49,7 @@ const AdminSidebar = ({ adminPhoto, adminName }) => {
             borderRadius: "50%",
             objectFit: "cover",
           }}
-        />
+        />*/}
         <h5 className="mt-2">{adminName}</h5>
       </div>
       

@@ -17,6 +17,7 @@ import MedicalHistoriesPage from "../admin/MedicalHistories";
 import BillingPage from "../admin/Billing";
 import ReportsPage from "../admin/ReportPage";
 import AdminProfile from "../admin/Profile";
+import NoticeCreate from "../admin/Notice";
 import { api } from "../../api";
 
 // Register chart types
@@ -220,6 +221,7 @@ const AdminDashboard = ({ me, onLogout }) => {
             <Route path="medical-histories" element={<MedicalHistoriesPage />} />
             <Route path="billings" element={<BillingPage />} />
             <Route path="reports" element={<ReportsPage />} />
+            <Route path="notices/create" element={<NoticeCreate />} />
             <Route path="profile" element={<AdminProfile user={me} />} />
           </Routes>
         </div>

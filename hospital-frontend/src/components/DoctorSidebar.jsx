@@ -18,6 +18,7 @@ const menu = [
   { name: "Doctors", path: "/doctor/doctors", icon: <FiUserPlus /> },
   { name: "Nurses", path: "/doctor/nurses", icon: <FiUserCheck /> },
   { name: "Patients", path: "/doctor/patients", icon: <FiUsers /> },
+  { name: "Shedules", path: "/doctor/doctor-shedules", icon: <FiCalendar /> },
   { name: "Appointments", path: "/doctor/appointments", icon: <FiCalendar /> },
   { name: "Medical History", path: "/doctor/medical-histories", icon: <FiFileText /> },
 ];
@@ -34,7 +35,7 @@ const DoctorSidebar = ({ doctorPhoto, doctorName }) => {
   return (
     <div className="sidebar p-3 bg-light" style={{ width: "220px", minHeight: "100vh" }}>
       <div className="d-flex flex-column align-items-center mb-4">
-        <img
+       {/* <img
           src={photoUrl}
           alt="Doctor Profile"
           style={{
@@ -45,7 +46,7 @@ const DoctorSidebar = ({ doctorPhoto, doctorName }) => {
             marginBottom: "10px",
             boxShadow: "0 0 6px rgba(0,0,0,0.1)",
           }}
-        />
+        />*/}
         <h6 className="text-center">{doctorName || "Doctor"}</h6>
       </div>
 

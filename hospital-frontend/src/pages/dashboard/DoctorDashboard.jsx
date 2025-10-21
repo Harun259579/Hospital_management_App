@@ -8,6 +8,8 @@ import PatientsTableOnly from "../doctor/Patient";
 import NursesPage from "../doctor/Nurse";
 import DoctorsPage from "../doctor/doctor";
 import DoctorProfile from "../doctor/Profile";
+import DoctorSchedule from "../doctor/shedule";
+import DoctorAppointments from "../doctor/Appointments";
 
 import { api } from "../../api";
 
@@ -102,6 +104,8 @@ const DoctorDashboard = ({ me, onLogout }) => {
             />
 
             {/* Nested Routes */}
+            <Route path="appointments" element={<DoctorAppointments />} />
+            <Route path="/doctor-shedules" element={<DoctorSchedule />} />
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="nurses" element={<NursesPage />} />
             <Route path="patients" element={<PatientsTableOnly />} />

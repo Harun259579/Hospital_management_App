@@ -70,49 +70,49 @@ class StaffController extends Controller
     }
 
     // ✏️ Update Staff
-    public function update(Request $req, $id)
-    {
-        $this->authorizeAdmin($req->user());
+   public function update(Request $req)
+{
+    $user = $req->user();
 
-        $staff = Staff::findOrFail($id);
+    $staff = Staff::where('user_id', $user->id)->firstOrFail();
 
-        $data = $req->validate([
-            'photo' => 'nullable|file|image|mimes:jpg,jpeg,png,gif|max:2048',
-            'dob' => 'nullable|date',
-            'gender' => 'nullable|string',
-            'phone' => 'nullable|string',
-            'address' => 'nullable|string',
-            'shift' => 'nullable|string',
-        ]);
+    $data = $req->validate([
+        'photo' => 'nullable|file|image|mimes:jpg,jpeg,png,gif|max:2048',
+        'dob' => 'nullable|date',
+        'gender' => 'nullable|string',
+        'phone' => 'nullable|string',
+        'address' => 'nullable|string',
+        'shift' => 'nullable|string',
+        'name' => 'nullable|string',
+    ]);
 
-        // 🖼️ Handle photo update
-        if ($req->hasFile('photo')) {
-            // Delete old photo if exists
-            if ($staff->photo && file_exists(public_path($staff->photo))) {
-                unlink(public_path($staff->photo));
-            }
-
-            $file = $req->file('photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/staffs'), $filename);
-            $data['photo'] = '/uploads/staffs/' . $filename;
+    // Handle photo upload
+    if ($req->hasFile('photo')) {
+        if ($staff->photo && file_exists(public_path($staff->photo))) {
+            unlink(public_path($staff->photo));
         }
 
-        $staff->update($data);
+        $file = $req->file('photo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/staffs'), $filename);
+        $data['photo'] = '/uploads/staffs/' . $filename;
+    }
 
-        // 👤 Update related user info if passed
-        if ($req->has('name') || $req->has('email')) {
-            $staff->user->update([
-                'name' => $req->input('name', $staff->user->name),
-                'email' => $req->input('email', $staff->user->email),
-            ]);
-        }
+    $staff->update($data);
 
-        return response()->json([
-            "message" => "Staff updated successfully",
-            "data" => $staff->load('user')
+    // Update user name if provided
+    if ($req->has('name')) {
+        $staff->user->update([
+            'name' => $req->input('name', $staff->user->name),
         ]);
     }
+
+    return response()->json([
+        "message" => "Profile updated successfully",
+        "data" => $staff->load('user')
+    ]);
+}
+
 
     // 🗑️ Delete Staff
     public function destroy(Request $req, $id)

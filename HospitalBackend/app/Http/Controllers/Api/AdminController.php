@@ -72,45 +72,48 @@ class AdminController extends Controller
 
 public function update(Request $req, $id)
 {
-    try {
-        $this->authorizeAdmin($req->user());
+    $this->authorizeAdmin($req->user()); // ✅ Optional check
 
-        $admin = Admin::with('user')->findOrFail($id);
+    $admin = Admin::with('user')->findOrFail($id);
 
-        // ডেটা ভ্যালিডেশন
-        $data = $req->validate([
-            'name' => 'nullable|string|max:255',
-            'email' => 'nullable|email',
-            'phone' => 'nullable|string|max:20',
-            'address' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png,gif',
-        ]);
+    // ✅ Validate everything
+    $data = $req->validate([
+        'name' => 'nullable|string|max:255',
+        'email' => 'nullable|email',
+        'photo' => 'nullable|file|image|mimes:jpg,jpeg,png,gif',
+        'phone' => 'nullable|string|max:20',
+        'address' => 'nullable|string|max:255',
+    ]);
 
-        // যদি ছবি থাকে
-        if ($req->hasFile('photo')) {
-            if ($admin->photo && file_exists(public_path($admin->photo))) {
-                unlink(public_path($admin->photo));  // পুরানো ছবি মুছে ফেলা
-            }
+    // ✅ Update user info (users table)
+    if (!empty($data['name']) || !empty($data['email'])) {
+        $userData = [];
+        if (!empty($data['name'])) $userData['name'] = $data['name'];
+        if (!empty($data['email'])) $userData['email'] = $data['email'];
+        $admin->user->update($userData);
+    }
 
-            $file = $req->file('photo');
-            $filename = time() . '_' . $file->getClientOriginalName();
-            $file->move(public_path('uploads/admins'), $filename);
-            $data['photo'] = '/uploads/admins/' . $filename;
+    // ✅ Handle photo upload (save in /public/uploads/admins)
+    if ($req->hasFile('photo')) {
+        if ($admin->photo && file_exists(public_path($admin->photo))) {
+            unlink(public_path($admin->photo)); // পুরনো ছবি ডিলিট
         }
 
-        // অ্যাডমিন আপডেট করা
-        $admin->update(array_filter($data, function ($key) {
-            return in_array($key, ['photo', 'phone', 'address']);
-        }, ARRAY_FILTER_USE_KEY));
-
-        return response()->json([
-            'message' => 'Admin updated successfully',
-            'data' => $admin->load('user'),
-        ]);
-    } catch (\Exception $e) {
-        Log::error("Error updating admin: " . $e->getMessage());
-        return response()->json(['message' => 'Internal Server Error'], 500);
+        $file = $req->file('photo');
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('uploads/admins'), $filename);
+        $data['photo'] = '/uploads/admins/' . $filename;
     }
+
+    // ✅ Update admin info (admins table)
+    $admin->update(array_filter($data, function ($key) {
+        return in_array($key, ['photo', 'phone', 'address']);
+    }, ARRAY_FILTER_USE_KEY));
+
+    return response()->json([
+        'message' => 'Admin updated successfully',
+        'data' => $admin->load('user'),
+    ]);
 }
 
 
