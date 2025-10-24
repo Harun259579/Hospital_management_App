@@ -15,11 +15,12 @@ import { assetBase } from "../api";
 const menu = [
   { name: "Dashboard", path: "/doctor/dashboard", icon: <FiHome /> },
   { name: "Profile", path: "/doctor/profile", icon: <FiUser /> },
+  { name: "Shedules", path: "/doctor/doctor-shedules", icon: <FiCalendar /> },
+  { name: "Appointments", path: "/doctor/appointments", icon: <FiCalendar /> },
   { name: "Doctors", path: "/doctor/doctors", icon: <FiUserPlus /> },
   { name: "Nurses", path: "/doctor/nurses", icon: <FiUserCheck /> },
   { name: "Patients", path: "/doctor/patients", icon: <FiUsers /> },
-  { name: "Shedules", path: "/doctor/doctor-shedules", icon: <FiCalendar /> },
-  { name: "Appointments", path: "/doctor/appointments", icon: <FiCalendar /> },
+  
   { name: "Medical History", path: "/doctor/medical-histories", icon: <FiFileText /> },
 ];
 

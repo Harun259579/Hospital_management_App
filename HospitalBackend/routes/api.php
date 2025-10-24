@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\ReportController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\NoticeController;
+use App\Http\Controllers\Api\TestController;
+use App\Http\Controllers\Api\TestNameController;
 
 
 
@@ -51,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/admin/profile', [AdminController::class, 'myProfile']);
     Route::post('/notices', [NoticeController::class, 'store']);
     Route::delete('/notices/{id}', [NoticeController::class, 'destroy']);
+    Route::apiResource('/testnames', TestNameController::class);
 
     // ====================== DOCTOR ======================
     
@@ -78,6 +81,12 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/staffs/{id}', [StaffController::class, 'destroy']);
     Route::get('/staff/stats', [StaffController::class, 'stats']);
     Route::get('/staff/profile', [StaffController::class, 'myProfile']);
+    Route::patch('/tests/{test}/status', [TestController::class, 'updateStatus']);
+    Route::get('/staff/tests', [TestController::class, 'staffIndex']);
+
+   
+
+
 
     // ====================== PATIENT ======================
     
@@ -88,6 +97,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/patient/stats', [PatientController::class, 'stats']);
     Route::get('/patient/profile', [PatientController::class, 'myProfile']);
     Route::get('/patient/{id}/billing', [PatientController::class, 'getBillingData']);
+    Route::get('/tests/{test}/download', [TestController::class, 'download']);
 
     // ======================  APPOINTMENTS ======================
     
@@ -95,6 +105,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/appointments', [AppointmentController::class, 'store']);
     Route::put('/appointments/{id}', [AppointmentController::class, 'update']);
     Route::delete('/appointments/{id}', [AppointmentController::class, 'destroy']);
+
+    //==========================Test======================================
+     Route::get('/tests', [TestController::class, 'index']);
+    Route::post('/tests', [TestController::class, 'store']);
+    Route::delete('/tests/{test}', [TestController::class, 'destroy']);
 
     //===========================Message============================
     Route::get('/contact-messages', [ContactController::class, 'index']);

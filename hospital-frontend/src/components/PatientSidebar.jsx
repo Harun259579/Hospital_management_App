@@ -7,6 +7,7 @@ const menu = [
   { name: "Profile", path: "/patient/profile", icon: <FiUser /> },
   { name: "Doctors", path: "/patient/doctors", icon: <FiUserPlus /> },
   { name: "Appointments", path: "/patient/appointments", icon: <FiCalendar /> },
+  { name: "Test", path: "/patient/tests", icon: <FiDollarSign /> },
   { name: "Billing", path: "/patient/billings", icon: <FiDollarSign /> },
   { name: "Medical History", path: "/patient/medical-histories", icon: <FiFileText /> },
 ];
@@ -16,12 +17,12 @@ const PatientSidebar = ({ user }) => {
     <div className="sidebar p-3 bg-light" style={{ width: "220px", minHeight: "100vh" }}>
       {/* Profile Section */}
       <div className="text-center mb-4">
-        <img
+       {/* <img
           src={user.photo ? `${process.env.REACT_APP_API_URL}/storage/${user.photo}` : "/default-avatar.png"}
           alt="Patient"
           className="img-fluid rounded-circle"
           style={{ width: "80px", height: "80px", objectFit: "cover" }}
-        />
+        />*/}
         <h5 className="mt-2">{user.name}</h5>
       </div>
 

@@ -24,12 +24,12 @@ const NurseSidebar = ({ user }) => {
     <div className="sidebar p-3 bg-light" style={{ width: "220px", minHeight: "100vh" }}>
       {/* Profile Section */}
       <div className="text-center mb-4">
-        <img
+       {/* <img
           src={user.photo ? `${process.env.REACT_APP_API_URL}/storage/${user.photo}` : "/default-avatar.png"}
           alt="Nurse"
           className="img-fluid rounded-circle"
           style={{ width: "80px", height: "80px", objectFit: "cover" }}
-        />
+        />*/}
         <h5 className="mt-2">{user.name}</h5>
       </div>
 

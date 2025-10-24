@@ -18,6 +18,7 @@ import BillingPage from "../admin/Billing";
 import ReportsPage from "../admin/ReportPage";
 import AdminProfile from "../admin/Profile";
 import NoticeCreate from "../admin/Notice";
+import TestNames from "../admin/TestName";
 import { api } from "../../api";
 
 // Register chart types
@@ -211,6 +212,7 @@ const AdminDashboard = ({ me, onLogout }) => {
             />
 
             {/* ✅ Nested Routes */}
+            <Route path="testnames" element={<TestNames />} />
             <Route path="doctors" element={<DoctorsPage />} />
             <Route path="nurses" element={<NursesPage />} />
             <Route path="staffs" element={<StaffsPage />} />

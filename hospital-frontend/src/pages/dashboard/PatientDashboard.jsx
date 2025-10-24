@@ -8,6 +8,7 @@ import PatientProfile from "../patient/Profile";
 import DoctorsPage from "../patient/Doctor";
 import PatientBillingPage from"../patient/Billing";
 import Appointments from"../patient/Appointment";
+import Tests from"../patient/Test";
 /*
 import AppointmentsPage from "../patient/Appointments";
 import MedicalHistoryPage from "../patient/MedicalHistory";
@@ -122,6 +123,7 @@ const PatientDashboard = ({ me, onLogout }) => {
             />
 
             {/* Nested Routes */}
+            <Route path="/tests" element={<Tests />} />
             <Route path="/appointments" element={<Appointments />} />
             <Route path="profile" element={<PatientProfile user={me} />} />
             <Route path="doctors" element={<DoctorsPage />} />

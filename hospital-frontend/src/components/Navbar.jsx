@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Navbar, Nav, Button, Form } from "react-bootstrap";
+import logo1 from "../../public/images/logo1.jpg";  
 
 const AppNavbar = ({ user, onLogout }) => {
   const [search, setSearch] = useState("");
@@ -11,18 +12,22 @@ const AppNavbar = ({ user, onLogout }) => {
     setSearch(searchTerm);
 
     if (searchTerm.trim()) {
-      // Navigate to the doctors page with the search query in the URL
       navigate(`/doctors?search=${searchTerm}`);
     } else {
-      // If the search bar is empty, reset to show all doctors
       navigate(`/doctors`);
     }
   };
 
   return (
     <Navbar bg="light" expand="lg" className="shadow-sm mb-4" fixed="top">
-      <Navbar.Brand as={Link} to="/" className="fw-bold text-primary">
-        🏥 Adil Specialized Hospital
+      <Navbar.Brand as={Link} to="/" className="fw-bold text-primary d-flex align-items-center">
+        {/* লোগো */}
+        <img
+          src={logo1}
+          alt="Logo"
+          style={{ width: "40px", height: "40px", marginRight: "10px" }}
+        />
+         Adil Specialized Hospital
       </Navbar.Brand>
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
@@ -56,7 +61,6 @@ const AppNavbar = ({ user, onLogout }) => {
           </Form>
         </Nav>
 
-        {/* Right corner: Login / Logout */}
         <Nav className="me-3 d-flex align-items-center">
           {user ? (
             <Button variant="danger" onClick={onLogout} className="rounded-pill px-3">

@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Table, Form } from "react-bootstrap";
+import { Table, Form, Button } from "react-bootstrap";
 import { api } from "../../api";
+import { FaTrash } from "react-icons/fa";
 
 const DoctorAppointments = () => {
   const [appointments, setAppointments] = useState([]);
   const [loading, setLoading] = useState(false);
   const [updatingId, setUpdatingId] = useState(null);
+  const [deletingId, setDeletingId] = useState(null);
 
   const fetchAppointments = async () => {
     setLoading(true);
@@ -31,10 +33,7 @@ const DoctorAppointments = () => {
   const handleStatusChange = async (id, newStatus) => {
     setUpdatingId(id);
     try {
-      const res = await api.put(`/appointments/${id}`, {
-        status: newStatus,
-      });
-
+      const res = await api.put(`/appointments/${id}`, { status: newStatus });
       setAppointments((prev) =>
         prev.map((appt) => (appt.id === id ? res.data : appt))
       );
@@ -43,6 +42,21 @@ const DoctorAppointments = () => {
       console.error(err);
     } finally {
       setUpdatingId(null);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this appointment?")) return;
+    setDeletingId(id);
+
+    try {
+      await api.delete(`/appointments/${id}`);
+      setAppointments((prev) => prev.filter((appt) => appt.id !== id));
+    } catch (err) {
+      alert("Failed to delete appointment");
+      console.error(err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -80,7 +94,6 @@ const DoctorAppointments = () => {
                     <option value="pending">Pending</option>
                     <option value="approved">Confirmed</option>
                     <option value="Cancelled">Cancelled</option>
-                    <option value="completed">Completed</option>
                   </Form.Select>
                 </td>
                 <td>
@@ -90,7 +103,17 @@ const DoctorAppointments = () => {
                     <span className="text-muted">N/A</span>
                   )}
                 </td>
-                <td>{/* প্রয়োজনমতো একশন যোগ করতে পারো */}</td>
+                <td>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    disabled={deletingId === appt.id}
+                    onClick={() => handleDelete(appt.id)}
+                  >
+                    <FaTrash className="me-1" />
+                    {deletingId === appt.id ? "Deleting..." : "Delete"}
+                  </Button>
+                </td>
               </tr>
             ))}
           </tbody>

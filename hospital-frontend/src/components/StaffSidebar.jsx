@@ -5,12 +5,15 @@ import { FiHome, FiUser, FiUsers, FiUserCheck, FiUserPlus, FiBox, FiDollarSign, 
 const menu = [
   { name: "Dashboard", path: "/staff/dashboard", icon: <FiHome /> },
   { name: "Profile", path: "/staff/profile", icon: <FiUser /> },
+  { name: "Patients", path: "/staff/patients", icon: <FiUser /> },
+  { name: "Inventory", path: "/staff/inventory", icon: <FiBox /> },
+  { name: "Tests", path: "/staff/tests", icon: <FiBox /> },
+  { name: "Billing", path: "/staff/billings", icon: <FiDollarSign /> },
   { name: "Doctors", path: "/staff/doctors", icon: <FiUserPlus /> },
   { name: "Nurses", path: "/staff/nurses", icon: <FiUserCheck /> },
   { name: "Staff", path: "/staff/staffs", icon: <FiUsers /> },
-  { name: "Patients", path: "/staff/patients", icon: <FiUser /> },
-  { name: "Inventory", path: "/staff/inventory", icon: <FiBox /> },
-  { name: "Billing", path: "/staff/billings", icon: <FiDollarSign /> },
+  
+ 
 ];
 
 const StaffSidebar = ({ user }) => {
@@ -18,12 +21,12 @@ const StaffSidebar = ({ user }) => {
     <div className="sidebar p-3 bg-light" style={{ width: "220px", minHeight: "100vh" }}>
       {/* Profile Section */}
       <div className="text-center mb-4">
-        <img
+       {/* <img
           src={user.photo ? `${process.env.REACT_APP_API_URL}/storage/${user.photo}` : "/default-avatar.png"}
           alt="Staff"
           className="img-fluid rounded-circle"
           style={{ width: "80px", height: "80px", objectFit: "cover" }}
-        />
+        />*/}
         <h5 className="mt-2">{user.name}</h5>
       </div>
 

@@ -12,6 +12,7 @@ import PatientsTableOnly from "../staff/Patient";
 import StaffsPage from "../staff/Staff";
 import AddBillingForm from "../staff/Billings";
 import AddInventoryForm from "../staff/Inventory";
+import StaffTests from "../staff/Tests";
 
 const StaffDashboard = ({ me, onLogout }) => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -116,6 +117,7 @@ const StaffDashboard = ({ me, onLogout }) => {
             />
 
             {/* Staff Profile Route */}
+             <Route path="tests" element={<StaffTests  />} />
             <Route path="inventory" element={<AddInventoryForm  />} />
             <Route path="billings" element={<AddBillingForm  />} />
             <Route path="staffs" element={<StaffsPage  />} />

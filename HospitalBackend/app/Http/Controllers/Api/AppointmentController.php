@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\Appointment;
 use App\Models\Patient;
 use App\Models\Doctor;
+use Illuminate\Support\Str;
+
 
 class AppointmentController extends Controller
 {
@@ -79,60 +81,58 @@ class AppointmentController extends Controller
         }
         return response()->json($appointment);
     }
-
-   public function update(Request $req, $id)
+public function update(Request $req, $id)
 {
-    // Admin or doctor can change status/details
-    $appointment = Appointment::findOrFail($id);
-    $user = $req->user();
-
-    if (!in_array($user->role, ['admin', 'doctor'])) {
-        return response()->json(['message' => 'Unauthorized'], 403);
-    }
-
-    $data = $req->validate([
-        'date' => 'nullable|date',
-        'time' => 'nullable',
-        'status' => 'nullable|in:pending,approved,cancelled,completed'
-    ]);
-
-    // যদি status update এর মধ্যে থাকে
-    if (isset($data['status'])) {
-        if ($data['status'] === 'approved') {
-            // Token generate করো শুধু approved status এ
-            $data['token_id'] = Str::uuid()->toString();
-        } else {
-            // approved ছাড়া অন্য status হলে token null করে দাও
-            $data['token_id'] = null;
-        }
-    }
-
-    $appointment->update($data);
-
-    // Optionally, এখানে notification বা email পাঠাতে পারো patient কে, টোকেন সহ
-
-    return response()->json($appointment);
-}
-
-    public function destroy(Request $req, $id)
-    {
-        // Patient can cancel own, admin can delete
+    try {
         $appointment = Appointment::findOrFail($id);
         $user = $req->user();
 
-        if ($user->role === 'patient') {
-            $patient = $user->patientProfile;
-            if (!$patient || $appointment->patient_id !== $patient->id) {
-                return response()->json(['message'=>'Unauthorized'], 403);
-            }
-            $appointment->update(['status' => 'cancelled']);
-            return response()->json($appointment);
+        if (!in_array($user->role, ['admin', 'doctor'])) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $this->authorizeAdmin($user);
-        Appointment::destroy($id);
-        return response()->json(null, 204);
+        $data = $req->validate([
+            'date' => 'nullable|date',
+            'time' => 'nullable',
+            'status' => 'nullable|in:pending,approved,Cancelled'
+        ]);
+
+        if (isset($data['status'])) {
+            if ($data['status'] === 'approved') {
+                $data['token_id'] = Str::uuid()->toString();
+            } else {
+                $data['token_id'] = null;
+            }
+        }
+
+        $appointment->update($data);
+
+        return response()->json($appointment);
+    } catch (\Exception $e) {
+        \Log::error('Appointment Update Error: '.$e->getMessage());
+        return response()->json(['message' => 'Server error'], 500);
     }
+}
+
+
+  public function destroy(Request $req, $id)
+{
+    $appointment = Appointment::findOrFail($id);
+    $user = $req->user();
+
+    if ($user->role === 'patient') {
+        $patient = $user->patientProfile;
+        if (!$patient || $appointment->patient_id !== $patient->id) {
+            return response()->json(['message'=>'Unauthorized'], 403);
+        }
+        $appointment->update(['status' => 'cancelled']);
+        return response()->json($appointment);
+    }
+
+    $this->authorizeAdmin($user);
+    Appointment::destroy($id);
+    return response()->json(null, 204);
+}
 
     // Extra helper: approve appointment
     public function approve(Request $req, $id)
