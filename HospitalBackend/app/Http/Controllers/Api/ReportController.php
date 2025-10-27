@@ -17,57 +17,95 @@ class ReportController extends Controller
         $this->middleware('auth:sanctum');
     }
 
-    // Daily income
+    /**
+     * ✅ Daily Income Report (Full Bill Details)
+     */
     public function dailyIncome()
     {
         $today = Carbon::today();
-        $total = Billing::whereDate('created_at', $today)->sum('amount');
 
-        return response()->json([
-            'date' => $today->toDateString(),
-            'total_income' => $total
-        ]);
+        // Full bill list (today)
+        $bills = Billing::whereDate('created_at', $today)
+            ->select('id', 'patient_id', 'amount', 'cost_description', 'status', 'payment_date', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($bills);
     }
 
-    // monthly income
+    /**
+     * ✅ Monthly Income Report (Full Bill Details)
+     */
     public function monthlyIncome()
     {
         $month = Carbon::now()->month;
         $year = Carbon::now()->year;
 
-        $total = Billing::whereYear('created_at', $year)
-                        ->whereMonth('created_at', $month)
-                        ->sum('amount');
+        $bills = Billing::whereYear('created_at', $year)
+            ->whereMonth('created_at', $month)
+            ->select('id', 'patient_id', 'amount', 'cost_description', 'status', 'payment_date', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        return response()->json([
-            'month' => Carbon::now()->format('F Y'),
-            'total_income' => $total
-        ]);
+        return response()->json($bills);
     }
 
-    // Doctor-wise earnings report
+    /**
+     * ✅ Yearly Income Report (Full Bill Details)
+     */
+    public function yearlyIncome()
+    {
+        $year = Carbon::now()->year;
+
+        $bills = Billing::whereYear('created_at', $year)
+            ->select('id', 'patient_id', 'amount', 'cost_description', 'status', 'payment_date', 'created_at')
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return response()->json($bills);
+    }
+
+    /**
+     * ✅ Doctor-wise Earnings Report
+     */
     public function doctorEarnings()
     {
-        $data = Billing::select('doctor_id', DB::raw('SUM(amount) as total'))
+        $data = Billing::select('doctor_id', DB::raw('SUM(amount) as total_earnings'))
             ->groupBy('doctor_id')
-            ->with('doctor.user')
-            ->get();
+            ->with(['doctor.user:id,name'])
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'doctor_name' => $item->doctor->user->name ?? 'Unknown',
+                    'total_earnings' => $item->total_earnings,
+                ];
+            });
 
         return response()->json($data);
     }
 
-    //  Appointment summary
+    /**
+     * ✅ Appointment Summary Report
+     */
     public function appointmentReport(Request $req)
     {
         $from = $req->query('from', Carbon::now()->subMonth());
         $to = $req->query('to', Carbon::now());
 
-        $count = Appointment::whereBetween('date', [$from, $to])->count();
+        $appointments = Appointment::whereBetween('date', [$from, $to])->get();
 
-        return response()->json([
-            'from' => $from,
-            'to' => $to,
-            'total_appointments' => $count
-        ]);
+        $data = $appointments
+            ->groupBy('date')
+            ->map(function ($group) {
+                return [
+                    'date' => $group->first()->date,
+                    'total_appointments' => $group->count(),
+                    'completed' => $group->where('status', 'completed')->count(),
+                    'pending' => $group->where('status', 'pending')->count(),
+                ];
+            })
+            ->values();
+
+        return response()->json($data);
     }
 }

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Form, Container, Row, Col, Alert } from "react-bootstrap";
 import { api } from "../../api"; 
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 const TestNames = () => {
   const [tests, setTests] = useState([]);
@@ -172,23 +173,27 @@ const TestNames = () => {
                 <td>{index + 1}</td>
                 <td>{test.name}</td>
                 <td>{test.price}</td>
-                <td>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    className="me-2"
-                    onClick={() => handleEdit(test)}
-                  >
-                    ✏️ Edit
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleDelete(test.id)}
-                  >
-                    🗑️ Delete
-                  </Button>
-                </td>
+               <td className="text-center">
+                <Button
+                  variant="warning"
+                  size="sm"
+                  className="me-2 d-flex align-items-center justify-content-center"
+                  onClick={() => handleEdit(test)}
+                >
+                  <FaEdit />
+                </Button>
+
+                <Button
+                  variant="danger"
+                  size="sm"
+                  className="d-flex align-items-center justify-content-center"
+                  onClick={() => handleDelete(test.id)}
+                >
+                  <FaTrash />
+                </Button>
+              </td>
+
+
               </tr>
             ))}
           </tbody>

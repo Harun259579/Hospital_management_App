@@ -54,6 +54,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/notices', [NoticeController::class, 'store']);
     Route::delete('/notices/{id}', [NoticeController::class, 'destroy']);
     Route::apiResource('/testnames', TestNameController::class);
+    Route::get('/admin/appointments-stats', [AdminController::class, 'appointmentsStats']);
+    Route::get('/admin/billing-stats', [AdminController::class, 'billingStats']);
+
 
     // ====================== DOCTOR ======================
     
@@ -156,7 +159,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // ====================== REPORTS ======================
     Route::get('/reports/daily-income', [ReportController::class, 'dailyIncome']);
     Route::get('/reports/monthly-income', [ReportController::class, 'monthlyIncome']);
+    Route::get('/reports/yearly-income', [ReportController::class, 'yearlyIncome']);
     Route::get('/reports/doctor-earnings', [ReportController::class, 'doctorEarnings']);
+
     Route::get('/reports/appointments', [ReportController::class, 'appointmentReport']);
 });
 

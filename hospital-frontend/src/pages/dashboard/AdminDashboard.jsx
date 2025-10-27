@@ -46,37 +46,37 @@ const AdminDashboard = ({ me, onLogout }) => {
   const toggleSidebar = () => setSidebarOpen(!sidebarOpen);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const res = await api.get("/admin/stats");
-        setStats(res.data);
-      } catch (err) {
-        console.error("Failed to load stats:", err);
-      }
-    };
+  const fetchStats = async () => {
+    try {
+      const res = await api.get("/admin/stats");
+      setStats(res.data);
+    } catch (err) {
+      console.error("Failed to load stats:", err);
+    }
+  };
 
-    const fetchAppointmentData = async () => {
-      try {
-        const res = await api.get("/admin/appointments-stats");
-        setAppointmentsData(res.data);
-      } catch (err) {
-        console.error("Failed to load appointments data:", err);
-      }
-    };
+  const fetchAppointmentData = async () => {
+    try {
+      const res = await api.get("/admin/appointments-stats");
+      setAppointmentsData(res.data);
+    } catch (err) {
+      console.error("Failed to load appointments data:", err);
+    }
+  };
 
-    const fetchBillingData = async () => {
-      try {
-        const res = await api.get("/admin/billing-stats");
-        setBillingData(res.data);
-      } catch (err) {
-        console.error("Failed to load billing data:", err);
-      }
-    };
+  const fetchBillingData = async () => {
+    try {
+      const res = await api.get("/admin/billing-stats");
+      console.log(res.data); // এটা দেখাবে আসল data
+      setBillingData(res.data);
+    } catch (err) {
+      console.error("Failed to load billing data:", err);
+    }
+  };
 
-    fetchStats();
-    fetchAppointmentData();
-    fetchBillingData();
-  }, []);
+  fetchBillingData();
+}, []);
+
 
   const [modalShow, setModalShow] = useState(false);
   const [modalRole, setModalRole] = useState("doctor");
@@ -87,30 +87,31 @@ const AdminDashboard = ({ me, onLogout }) => {
   };
 
   // Pie Chart for Appointments Distribution
-  const appointmentsChartData = {
-    labels: appointmentsData.map((item) => item.status),
-    datasets: [
-      {
-        label: "Appointments",
-        data: appointmentsData.map((item) => item.appointments),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-      },
-    ],
-  };
+const appointmentsChartData = {
+  labels: appointmentsData.map((item) => item.status),
+  datasets: [
+    {
+      label: "Appointments",
+      data: appointmentsData.map((item) => item.appointments),
+      backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
+    },
+  ],
+};
 
   // Bar Chart for Billing Amounts
-  const billingChartData = {
-    labels: billingData.map((item) => item.month),
-    datasets: [
-      {
-        label: "Billing Amount",
-        data: billingData.map((item) => item.amount),
-        backgroundColor: "#4e73df",
-        borderColor: "#4e73df",
-        borderWidth: 1,
-      },
-    ],
-  };
+const billingChartData = {
+  labels: billingData.map(item => item.month),
+datasets: [
+  {
+    label: 'Billing Amount',
+    data: billingData.map(item => item.amount),
+    backgroundColor: '#4e73df'
+  }
+]
+};
+
+
+
 
   return (
     <div className="d-flex">
@@ -180,16 +181,32 @@ const AdminDashboard = ({ me, onLogout }) => {
                     </Button>
                   </div>
 
-                  {/* Appointment Pie Chart and Billing Bar Chart in the Same Row */}
+                  
                   <Row className="mb-4">
-                    <Col md={6}>
-                      <Card className="shadow">
-                        <Card.Body>
-                          <h5>Appointments Status</h5>
-                          <Pie data={appointmentsChartData} />
-                        </Card.Body>
-                      </Card>
-                    </Col>
+                   <Col md={6}>
+                    <Card className="shadow">
+                       <Card.Body>
+                    <h5>Appointments Status</h5>
+                    <div style={{ height: '200px', width: '100%' }}> 
+                      <Pie 
+                        data={appointmentsChartData} 
+                        options={{
+                          maintainAspectRatio: false, 
+                          plugins: {
+                            legend: {
+                              position: 'top', // <- legend এখন chart-এর top এ থাকবে
+                              labels: {
+                                boxWidth: 20,
+                                padding: 15,
+                              },
+                            }
+                          }
+                        }} 
+                      />
+                    </div>
+                  </Card.Body>
+                    </Card>
+                  </Col>
 
                     <Col md={6}>
                       <Card className="shadow">

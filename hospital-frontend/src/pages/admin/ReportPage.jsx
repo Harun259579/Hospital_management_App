@@ -3,12 +3,13 @@ import { Table, Spinner, Alert, Form } from "react-bootstrap";
 import { api } from "../../api";
 
 const ReportsPage = () => {
-  const [reportType, setReportType] = useState("daily-income");
+  const [reportType, setReportType] = useState(""); // 🔹 Start with empty
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   const fetchReport = async (type) => {
+    if (!type) return; // ✅ No fetch until user selects something
     setLoading(true);
     setError("");
     setData([]);
@@ -19,7 +20,6 @@ const ReportsPage = () => {
         headers: { Authorization: `Bearer ${token}` },
       });
 
-     
       const result = Array.isArray(res.data) ? res.data : [res.data];
       setData(result);
     } catch (err) {
@@ -30,52 +30,70 @@ const ReportsPage = () => {
     }
   };
 
-  
   useEffect(() => {
-    fetchReport(reportType);
+    if (reportType) {
+      fetchReport(reportType);
+    }
   }, [reportType]);
 
-  const renderTable = () => {
-    if (reportType === "daily-income") {
-      return (
-        <Table striped bordered hover responsive>
-          <thead className="table-primary">
-            <tr>
-              <th>Date</th>
-              <th>Total Income</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((row, i) => (
-              <tr key={i}>
-                <td>{row.date}</td>
-                <td>{row.total_income}</td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
-      );
-    }
+  const renderBillTable = (title, rows, color) => {
+    const totalAmount = rows.reduce((sum, r) => sum + parseFloat(r.amount || 0), 0);
 
-    if (reportType === "monthly-income") {
-      return (
+    return (
+      <div className="mb-4">
+        <h5 className="mt-4">{title}</h5>
         <Table striped bordered hover responsive>
-          <thead className="table-success">
+          <thead className={color}>
             <tr>
-              <th>Month</th>
-              <th>Total Income</th>
+              <th>Patient ID</th>
+              <th>Amount</th>
+              <th>Cost Description</th>
+              <th>Status</th>
+              <th>Payment Date</th>
             </tr>
           </thead>
           <tbody>
-            {data.map((row, i) => (
+            {rows.map((row, i) => (
               <tr key={i}>
-                <td>{row.month}</td>
-                <td>{row.total_income}</td>
+                <td>{row.patient_id}</td>
+                <td>{row.amount}</td>
+                <td>{row.cost_description || "—"}</td>
+                <td>{row.status}</td>
+                <td>{row.payment_date || "—"}</td>
               </tr>
             ))}
+            {rows.length > 0 && (
+              <tr className="fw-bold">
+                <td colSpan={5} className="text-end">
+                  Total Amount: {totalAmount.toFixed(2)}
+                </td>
+              </tr>
+            )}
           </tbody>
         </Table>
-      );
+      </div>
+    );
+  };
+
+  const renderReportTables = () => {
+    const paidData = data.filter((row) => row.status === "paid");
+    const unpaidData = data.filter((row) => row.status === "unpaid");
+
+    return (
+      <>
+        {renderBillTable("💰 Paid Bills", paidData, "table-success")}
+        {renderBillTable("❌ Unpaid Bills", unpaidData, "table-danger")}
+      </>
+    );
+  };
+
+  const renderTable = () => {
+    if (
+      reportType === "daily-income" ||
+      reportType === "monthly-income" ||
+      reportType === "yearly-income"
+    ) {
+      return renderReportTables();
     }
 
     if (reportType === "doctor-earnings") {
@@ -127,7 +145,7 @@ const ReportsPage = () => {
 
   return (
     <div className="container mt-4">
-      <h3 className="mb-3">📊 Reports</h3>
+      <h3 className="mb-3">📊 Billings Reports</h3>
 
       <Form.Group className="mb-3" controlId="reportType">
         <Form.Label>Select Report Type</Form.Label>
@@ -135,12 +153,20 @@ const ReportsPage = () => {
           value={reportType}
           onChange={(e) => setReportType(e.target.value)}
         >
+          <option value="">-- Select Report Type --</option>
           <option value="daily-income">🗓 Daily Income Report</option>
           <option value="monthly-income">📆 Monthly Income Report</option>
-          <option value="doctor-earnings">👨‍⚕️ Doctor Earnings</option>
-          <option value="appointments">📋 Appointment Report</option>
+          <option value="yearly-income">📅 Yearly Income Report</option>
+        
         </Form.Select>
       </Form.Group>
+
+      {/* ✅ Blank screen initially */}
+      {!reportType && (
+        <Alert variant="secondary" className="text-center">
+          Please select a report type to view data.
+        </Alert>
+      )}
 
       {loading && (
         <div className="text-center mt-4">
@@ -151,9 +177,9 @@ const ReportsPage = () => {
 
       {error && <Alert variant="danger">{error}</Alert>}
 
-      {!loading && !error && data.length > 0 && renderTable()}
+      {!loading && !error && reportType && data.length > 0 && renderTable()}
 
-      {!loading && !error && data.length === 0 && (
+      {!loading && !error && reportType && data.length === 0 && (
         <Alert variant="info">No report data found</Alert>
       )}
     </div>

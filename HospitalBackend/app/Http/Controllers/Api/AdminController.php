@@ -4,12 +4,16 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use App\Models\Admin;
 use App\Models\User;
 use App\Models\Doctor;
 use App\Models\Nurse;
 use App\Models\Staff;
 use App\Models\Patient;
+use App\Models\Appointment;
+use App\Models\Billing;
+use Carbon\Carbon;
 
 
 class AdminController extends Controller
@@ -146,6 +150,63 @@ public function update(Request $req, $id)
 
         return response()->json($admin);
     }
+
+
+    public function appointmentsStats()
+{
+    // Example: status-wise appointments count
+    $statuses = ['pending', 'approved', 'Cancelled'];
+    $stats = [];
+
+    foreach ($statuses as $status) {
+        $stats[] = [
+            'status' => $status,
+            'appointments' => Appointment::where('status', $status)->count()
+        ];
+    }
+
+    return response()->json($stats);
+}
+
+public function billingStats()
+{
+    // Get all months of the year, even if amount is 0
+    $allMonths = collect([
+        ['month_number' => 1, 'month' => 'January'],
+        ['month_number' => 2, 'month' => 'February'],
+        ['month_number' => 3, 'month' => 'March'],
+        ['month_number' => 4, 'month' => 'April'],
+        ['month_number' => 5, 'month' => 'May'],
+        ['month_number' => 6, 'month' => 'June'],
+        ['month_number' => 7, 'month' => 'July'],
+        ['month_number' => 8, 'month' => 'August'],
+        ['month_number' => 9, 'month' => 'September'],
+        ['month_number' => 10, 'month' => 'October'],
+        ['month_number' => 11, 'month' => 'November'],
+        ['month_number' => 12, 'month' => 'December'],
+    ]);
+
+    $stats = DB::table('billings')
+        ->select(
+            DB::raw('MONTH(payment_date) as month_number'),
+            DB::raw('SUM(amount) as amount')
+        )
+        ->whereYear('payment_date', date('Y'))
+        ->groupBy(DB::raw('MONTH(payment_date)'))
+        ->orderBy('month_number')
+        ->get();
+
+    // Merge with all months to include months with zero amount
+    $result = $allMonths->map(function ($month) use ($stats) {
+        $found = $stats->firstWhere('month_number', $month['month_number']);
+        return [
+            'month' => $month['month'],
+            'amount' => $found ? $found->amount : 0,
+        ];
+    });
+
+    return response()->json($result);
+}
 
     // ✅ Authorization check
     protected function authorizeAdmin($user)
